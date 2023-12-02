@@ -1,0 +1,89 @@
+#include "Board.h"
+#include "CandyStore.h"
+#include "Player.h"
+#include <sstream>
+#include <assert.h>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main(){
+
+    int n = 0;
+    string pname;
+    string line = "character name|stamina|gold|candies";
+    string name;
+    double stamina;
+    int gold;
+    Candy candies;
+
+
+    cout << "Welcome to Candy Land! How many people will be joining us on our adventure?" << endl;
+    cin >> n;
+
+    if(n < 0){
+        cout << "You need atleast 2 people to play!" << endl;
+    }
+    else if(n > 5){
+        cout << "Sorry but that's just to many people to take on our journey!" << endl;
+    }
+    else if(n = 1){
+        cout << "You almost have enough players. Go find one more friend!" << endl;
+    }
+    else{
+    return; vector<Player> players(n);
+    }
+
+    cout << "Perfect! Let's select our characters!" << endl;
+    for(int i = 0; i < n; i++){
+        cin >> players(i).setName;
+        cout << "What a wonderful name! Here is a list of characters that you can play as!" << endl;
+        stringstream ss(line);
+        getline(ss, name, '|');
+        getline(ss, stamina, '|');
+        getline(ss, gold, '|');
+
+
+        
+    }
+
+    Board board;
+    board.displayBoard();
+
+    cout << "Here is what the land looks like. Now it may look pretty bland, but I assure you that there are a plethora of secrets waiting to be found!" << endl;
+
+    int candy_store_idx;
+
+    Candy Purple = {"Purple","Purple Candy", 10, ""};
+    Candy Pink = {"Pink","Pink Candy", 13, ""};
+    Candy Orange = {"Orange","OrangeCandy", 9, ""};
+    Candy Blue = {"Blue","Blue Candy", 18, ""};
+
+    Candy_store c1("Sallie's Shop"), c2("Warren's Wares"), c3("Charlies Checkout");
+    assert(c1.addCandy(Purple));
+    assert(c1.addCandy(Pink));
+    assert(c2.addCandy(Purple));
+    assert(c2.addCandy(Orange));
+    assert(c3.addCandy(Blue));
+    assert(c3.addCandy(Pink));
+    assert(c3.addCandy(Orange));
+
+    Candy_store candy_stores[] = {c1, c2, c3};
+
+    assert(board.addCandyStore(rand()%83));
+    assert(board.addCandyStore(rand()%83));
+    assert(board.addCandyStore(rand()%83));
+
+    cout << "Now we've got some hidden Candy Stores across the land. These can be used to assist you in your journey!" << endl;
+    cout << "Alrighty I think it's high time that we started this adventure!" << endl;
+    cout << "We'll be pulling cards in the player order that we used to select characters. So we'll be going from " << endl;
+    cout << players(1).getName << " to " << endl;
+    cout << players(2).getName << " to " << endl; 
+    cout << players(3).getName << " to " <<  endl;
+    cout << players(4).getName << " to " << endl;
+    cout << players(5).getName << endl;
+
+
+    }
+
