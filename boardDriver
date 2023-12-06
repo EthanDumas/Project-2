@@ -140,6 +140,8 @@ bool Board::isPositionCandyStore(int board_position)
 
 bool Board::movePlayer(int tile_to_move_forward)
 {
+    tile_to_move_forward = getCardMovement();
+
     int new_player_position = tile_to_move_forward + _player_position;
     if(new_player_position < 0 || new_player_position >= _BOARD_SIZE)
     {
@@ -167,43 +169,113 @@ Card getCard() {
         card_name = "Magnificant Magenta Mango \033[;45m";
         card.color = "Magenta";
         cout << "You pulled a " << card_name << "!" << endl;
-        break;
+        return card;
 
         case 1:
         card_name = "Groovy Green Greengage \033[;42m";
         card.color = "Green";
         cout << "You pulled a " << card_name << "!" << endl;
-        break;
-
+        return card;
+        
         case 2:
         card_name = "Brilliant Blue Blueberry \033[;44m";
         card.color = "Blue";
         cout << "You pulled a " << card_name << "!" << endl;
-        break;
+        return card;
+        
+        default:
+        card_name = "";
+        card.color = "";
+        return card;
     }
 }
+
 bool checkCardValue() {
     int value = rand() % 10;
     if(value == 0){
         return true;
     }
-    else if(value != 0){
+    else{
         return false;
     }
 }
+
 int getCardMovement() {
     Card _card;
+    Board player;
 
     _card = getCard();
     if(checkCardValue() == false){
-        if(_card.color == "Magenta"){
-            for(int i = 1; i < 4; i++){
-                int possible_move = ;
-
-            }
+        for(int i = 1; i < 4; i++){
+            int possible_move = player.getPlayerPosition() + i;
+            int true_move;
+                if(_card.color == "Magenta"){
+                    if(possible_move % 3 == 0){
+                        true_move = possible_move;
+                        return true_move;
+                    }
+                    else if(possible_move % 3 != 0){
+                        return 0;
+                    }
+                    return true_move;
+                }
+                else if(_card.color == "Green"){
+                    if(possible_move % 3 == 1){
+                        true_move = possible_move;
+                        return true_move;
+                    }
+                    else if(possible_move % 3 != 1){
+                        return 0;
+                    }
+                    return true_move;
+                }
+                else if(_card.color == "Blue"){
+                    if(possible_move % 3 == 2){
+                        true_move = possible_move;
+                        return true_move;
+                    }
+                    else if(possible_move % 3 != 2){
+                        return 0;
+                    }
+                    return true_move;
+                }
         }
-        
     }
+    else if(checkCardValue() == true){
+        for(int i = 1; i < 4; i ++){
+            int two_possible_move = player.getPlayerPosition() + (3 + i);
+            int two_true_move;
+                if(_card.color == "Magenta"){
+                    if(two_possible_move % 3 == 0){
+                        two_true_move = two_possible_move;
+                        return two_true_move;
+                    }
+                    else if(two_possible_move % 3 != 0){
+                        return 0;
+                    }
+                }
+                else if(_card.color == "Green"){
+                    if(two_possible_move % 3 == 1){
+                        two_true_move = two_possible_move;
+                        return two_true_move;
+                    }
+                    else if(two_possible_move % 3 != 1){
+                        return 0;
+                    }
+                    return two_true_move;
+                }
+                else if(_card.color == "Blue"){
+                    if(two_possible_move % 3 == 2){
+                        two_true_move = two_possible_move;
+                        return two_true_move;
+                    }
+                    else if(two_possible_move % 3 != 2){
+                        return 0;
+                    }
+                    return two_true_move;
+                }
+        }
+    }      
 }
 
 
