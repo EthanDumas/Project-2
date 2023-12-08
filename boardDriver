@@ -1,286 +1,159 @@
 #include "Board.h"
+#include "CandyStore.h"
+#include "Player.h"
+#include <sstream>
+#include <assert.h>
+#include <iostream>
 
-Board::Board()
-{
-    resetBoard();
-}
+using namespace std;
 
-void Board::resetBoard()
-{
-    const int COLOR_COUNT = 3;
-    const string COLORS[COLOR_COUNT] = {MAGENTA, GREEN, BLUE};
-    Tile new_tile;
-    string current_color;
-    for (int i = 0; i < _BOARD_SIZE - 1; i++)
-    {
-        current_color = COLORS[i % COLOR_COUNT];
-        new_tile = {current_color, "regular tile"};
-        _tiles[i] = new_tile;
-    }
-    new_tile = {ORANGE, "regular tile"};
-    _tiles[_BOARD_SIZE - 1] = new_tile;
+int main(){
+    int n = 0;
+    char C; 
+    Board board;
+    string pname;
+    string line = "character name|stamina|gold|candies";
+    string name;
+    string stamina;
+    string gold;
+    string candies;
 
-    _candy_store_count = 0;
-    for (int i = 0; i < _MAX_CANDY_STORE; i++)
-    {
-        _candy_store_position[i] = -1;
-    }
+    board.resetBoard();
 
-    _player_position = 0;
-}
-
-void Board::displayTile(int position)
-{
-    if (position < 0 || position >= _BOARD_SIZE)
-    {
-        return;
-    }
-    Tile target = _tiles[position];
-    cout << target.color << " ";
-    if (position == _player_position)
-    {
-        cout << "X";
-    }
-    else
-    {
-        cout << " ";
-    }
-    cout << " " << RESET;
-}
-
-void Board::displayBoard()
-{
-    // First horizontal segment
-    for (int i = 0; i <= 23; i++)
-    {
-        displayTile(i);
-    }
-    cout << endl;
-    // First vertical segment
-    for (int i = 24; i <= 28; i++)
-    {
-        for (int j = 0; j < 23; j++)
-        {
-            cout << "   ";
-        }
-        displayTile(i);
-        cout << endl;
-    }
-    // Second horizontal segment
-    for (int i = 52; i > 28; i--)
-    {
-        displayTile(i);
-    }
-    cout << endl;
-    // Second vertical segment
-    for (int i = 53; i <= 57; i++)
-    {
-        displayTile(i);
-        for (int j = 0; j < 23; j++)
-        {
-            cout << "   ";
-        }
-        cout << endl;
-    }
-    // Third horizontal segment
-    for (int i = 58; i < _BOARD_SIZE; i++)
-    {
-        displayTile(i);
-    }
-    cout << ORANGE << "Castle" << RESET << endl;
-}
-
-bool Board::setPlayerPosition(int new_position)
-{
-    if (new_position >= 0 && new_position < _BOARD_SIZE)
-    {
-        _player_position = new_position;
-        return true;
-    }
-    return false;
-}
-
-int Board::getBoardSize() const
-{
-    return _BOARD_SIZE;
-}
-
-int Board::getCandyStoreCount() const
-{
-    return _candy_store_count;
-}
-
-int Board::getPlayerPosition() const
-{
-    return _player_position;
-}
-
-bool Board::addCandyStore(int position)
-{
-    if (_candy_store_count >= _MAX_CANDY_STORE)
-    {
-        return false;
-    }
-    _candy_store_position[_candy_store_count] = position;
-    _candy_store_count++;
-    return true;
-}
-
-bool Board::isPositionCandyStore(int board_position)
-{
-    for (int i = 0; i < _candy_store_count; i++)
-    {
-        if(_candy_store_position[i] == board_position)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Board::movePlayer(int tile_to_move_forward)
-{
-    tile_to_move_forward = getCardMovement();
-
-    int new_player_position = tile_to_move_forward + _player_position;
-    if(new_player_position < 0 || new_player_position >= _BOARD_SIZE)
-    {
-        return false;
-    }
-    _player_position = new_player_position;
-    return true;
-}
-
-int Board::getCandyStoreIndex(int board_position) {
-    for(int i = 0; i < _candy_store_count; i++) {
-        if(_candy_store_position[i] == board_position) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-Card getCard() {
-    string card_name;
-    Card card; 
     
-    switch(rand() % 3){
-        case 0:
-        card_name = "Magnificant Magenta Mango \033[;45m";
-        card.color = "Magenta";
-        cout << "You pulled a " << card_name << "!" << endl;
-        return card;
+    cout << "Welcome to Candy Land! How many people will be joining us on our adventure?" << endl;
+    cin >> n;
 
-        case 1:
-        card_name = "Groovy Green Greengage \033[;42m";
-        card.color = "Green";
-        cout << "You pulled a " << card_name << "!" << endl;
-        return card;
-        
-        case 2:
-        card_name = "Brilliant Blue Blueberry \033[;44m";
-        card.color = "Blue";
-        cout << "You pulled a " << card_name << "!" << endl;
-        return card;
-        
-        default:
-        card_name = "";
-        card.color = "";
-        return card;
-    }
-}
-
-bool checkCardValue() {
-    int value = rand() % 10;
-    if(value == 0){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-int getCardMovement() {
-    Card _card;
-    Board player;
-
-    _card = getCard();
-    if(checkCardValue() == false){
-        for(int i = 1; i < 4; i++){
-            int possible_move = player.getPlayerPosition() + i;
-            int true_move;
-                if(_card.color == "Magenta"){
-                    if(possible_move % 3 == 0){
-                        true_move = possible_move;
-                        return true_move;
-                    }
-                    else if(possible_move % 3 != 0){
-                        return 0;
-                    }
-                    return true_move;
-                }
-                else if(_card.color == "Green"){
-                    if(possible_move % 3 == 1){
-                        true_move = possible_move;
-                        return true_move;
-                    }
-                    else if(possible_move % 3 != 1){
-                        return 0;
-                    }
-                    return true_move;
-                }
-                else if(_card.color == "Blue"){
-                    if(possible_move % 3 == 2){
-                        true_move = possible_move;
-                        return true_move;
-                    }
-                    else if(possible_move % 3 != 2){
-                        return 0;
-                    }
-                    return true_move;
-                }
+    do{
+        if(n < 0){
+            cout << "You need atleast 2 people to play!" << endl;
+        }
+        else if(n > 4){
+            cout << "Sorry but that's just to many people to take on our journey!" << endl;
+        }
+        else if(n == 1){
+            cout << "You almost have enough players. Go find one more friend!" << endl;
         }
     }
-    else if(checkCardValue() == true){
-        for(int i = 1; i < 4; i ++){
-            int two_possible_move = player.getPlayerPosition() + (3 + i);
-            int two_true_move;
-                if(_card.color == "Magenta"){
-                    if(two_possible_move % 3 == 0){
-                        two_true_move = two_possible_move;
-                        return two_true_move;
-                    }
-                    else if(two_possible_move % 3 != 0){
-                        return 0;
-                    }
-                }
-                else if(_card.color == "Green"){
-                    if(two_possible_move % 3 == 1){
-                        two_true_move = two_possible_move;
-                        return two_true_move;
-                    }
-                    else if(two_possible_move % 3 != 1){
-                        return 0;
-                    }
-                    return two_true_move;
-                }
-                else if(_card.color == "Blue"){
-                    if(two_possible_move % 3 == 2){
-                        two_true_move = two_possible_move;
-                        return two_true_move;
-                    }
-                    else if(two_possible_move % 3 != 2){
-                        return 0;
-                    }
-                    return two_true_move;
-                }
+    while(n < 0 || n > 4 || n == 1);
+    vector<Player> Pplayers(n);
+    vector<Board> Bplayers(n);
+    Pplayers(n) = Bplayers(n);
+
+    
+    cout << "Perfect! Let's select our characters!" << endl;
+
+ /*
+use a while(getline()) to read each line (each individual character)
+stringstream that variable within your while loop so you can use getline() on each line
+getline() each variable you need using '|' as a delimiter
+string stream the candies section seperately and push back each value onto a vector, which allows us to print them later
+
+once we have values for all of our variables in a player class, we print out each value in the proper format inside the while loop, so that it can iterate and repeat for each individual character
+*/
+
+
+    for(int i = 0; i < n; i++){
+        cin >> pname;
+        Pplayers.at(i).setName(pname);
+        cout << "What a wonderful name! Here is a list of characters that you can play as!" << endl;
+        stringstream ss(line);
+        getline(ss, name, '|');
+        getline(ss, stamina, '|');
+        getline(ss, gold, '|');
+
+        stringstream sts(candies);
+        vector<string> candies_list;
+        while(getline(sts, candies , ',')){
+            candies_list.push_back(candies);
         }
-    }      
+
+        cout << "Name: " << name << endl;
+        cout << "Stamina: " << stamina << endl;
+        cout << "Gold: " << gold << endl;
+        for(int j = 0; j < 9; j++){
+            int candy_position = stoi(candies_list.at(j));
+            if(candy_position % 3 != 0){
+                cout << "[" << candies_list.at(j) << "]    ";
+            }
+            else if(candy_position % 3 == 0){
+                cout << "[" << candies_list.at(j) << "]    " << endl;
+            }
+        }  
+    }
+
+    board.displayBoard();
+
+    cout << "Here is what the land looks like. Now it may look pretty bland, but I assure you that there are a plethora of secrets waiting to be found!" << endl;
+
+    Candy_store c1("Sallie's Shop"), c2("Warren's Wares"), c3("Charlies Checkout");
+
+    for(int i = 0; i < 12; i++)
+    {
+        int candy_nums = rand() % 12;
+        board._candy(candies).at(candy_nums);
+        for(int j = 0; j <= board._candy(candies).size(); j++)
+        {
+            if(board._candy(candies).at(candy_nums).name == board._candy(candies).at(j).name)
+            {
+                return i-1;
+            }
+        }
+    }
+    board._candy(candies);
+
+    assert(c1.addCandy(board._candy(candies).at(3)));
+    assert(c1.addCandy(board._candy(candies).at(8)));
+    assert(c1.addCandy(board._candy(candies).at(11)));
+    assert(c1.addCandy(board._candy(candies).at(0)));
+
+    assert(c2.addCandy(board._candy(candies).at(5)));
+    assert(c2.addCandy(board._candy(candies).at(1)));
+    assert(c2.addCandy(board._candy(candies).at(6)));
+    assert(c2.addCandy(board._candy(candies).at(10)));
+
+    assert(c3.addCandy(board._candy(candies).at(9)));
+    assert(c3.addCandy(board._candy(candies).at(7)));
+    assert(c3.addCandy(board._candy(candies).at(2)));
+    assert(c3.addCandy(board._candy(candies).at(4)));
+
+    Candy_store candy_stores[] = {c1, c2, c3};
+
+    int candy_store_one_range = (rand() % 27) % 3 == 0;
+    int candy_store_two_range = (rand() % 54 + 28) % 3 == 1;
+    int candy_store_three_range = (rand() % 82 +55) % 3 == 2;
+
+    assert(board.addCandyStore(candy_store_one_range));
+    assert(board.addCandyStore(candy_store_two_range));
+    assert(board.addCandyStore(candy_store_three_range));
+
+    cout << "Now we've got some hidden Candy Stores across the land. These can be used to assist you in your journey!" << endl;
+    cout << "Alrighty I think it's high time that we started this adventure!" << endl;
+    cout << "We'll be pulling cards in the player order that we used to select characters. So we'll be going from " << endl;
+    cout << Pplayers.at(1).getName() << " to " << endl;
+    cout << Pplayers.at(2).getName() << " to " << endl; 
+    cout << Pplayers.at(3).getName() << " to " <<  endl;
+    cout << Pplayers.at(4).getName() << endl;
+
+    for(int i = 1; i <= 4; i++){
+        int player = Pplayers.at(i);
+        cout << "Here we go! It's" << Pplayers.at(i).getName() << "'s turn" << endl;
+        cout << "Choose what you want to do!" << endl;
+        cout << "1. Draw a card" << endl;
+        cout << "2. Use candy" << endl;
+        cout << "3. Show player stats" << endl;
+        cin >> C;
+            if(C == '1'){
+                cout << "To draw a card press D" << endl;
+                board.getCard(i);
+                board.getCardMovement(i);
+                board.movePlayer(Pplayers.at(i));
+            }
+    }
+
+
+
+
+
 }
-
-
-
-
-
-
 
